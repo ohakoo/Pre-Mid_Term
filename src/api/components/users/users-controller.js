@@ -50,8 +50,16 @@ async function createUser(request, response, next) {
     const name = request.body.name;
     const email = request.body.email;
     const password = request.body.password;
-
+  
     const success = await usersService.createUser(name, email, password);
+    const duplicateEmail = await usersService.duplicateEmail(email);
+
+    if (duplicateEmail){
+      throw errorResponder(
+        errorTypes.EMAIL_ALREADY_TAKEN
+      )
+    }
+
     if (!success) {
       throw errorResponder(
         errorTypes.UNPROCESSABLE_ENTITY,

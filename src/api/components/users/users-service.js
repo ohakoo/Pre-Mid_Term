@@ -1,6 +1,26 @@
 const usersRepository = require('./users-repository');
 const { hashPassword } = require('../../../utils/password');
 
+
+/**
+ * Returns boolean for users-controller from duplicateEmailCheck
+ * @param {string} email
+ * @returns {Boolean}
+ */
+async function duplicateEmail(email) {
+  try {
+    const user = await usersRepository.duplicateEmailCheck(email)
+    if (!user) {
+      return false
+    } else {
+      return true
+    }
+  } catch(err) {
+      console.err('Error occurred while checking for duplicate email: ', err)
+      return false
+    }
+}
+
 /**
  * Get list of users
  * @returns {Array}
@@ -108,6 +128,7 @@ async function deleteUser(id) {
 }
 
 module.exports = {
+  duplicateEmail,
   getUsers,
   getUser,
   createUser,

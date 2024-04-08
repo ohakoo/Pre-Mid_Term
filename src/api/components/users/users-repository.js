@@ -1,6 +1,19 @@
 const { User } = require('../../../models');
 
 /**
+ * Checks for a duplicate email 
+ * @param {string} email
+ * @returns {Promise}
+ */
+async function duplicateEmailCheck(email) {
+    const user = await User.findOne(
+      {email: email}
+    )
+    return !!user
+}
+
+
+/**
  * Get a list of users
  * @returns {Promise}
  */
@@ -63,6 +76,7 @@ async function deleteUser(id) {
 }
 
 module.exports = {
+  duplicateEmailCheck,
   getUsers,
   getUser,
   createUser,
