@@ -46,15 +46,13 @@ async function getUser(request, response, next) {
  * @returns {object} Response object or pass an error to the next route
  */
 async function createUser(request, response, next) {
-  const name = request.body.name;
-  const email = request.body.email;
-  const password = request.body.password;
   
   try {
     const name = request.body.name;
     const email = request.body.email;
     const password = request.body.password;
-    
+    const password_confirm = request.body.password_confirm;
+
     const emailTaken = await usersService.duplicateEmail(email);
     if (emailTaken) {
       throw errorResponder(
@@ -63,13 +61,20 @@ async function createUser(request, response, next) {
       )
     }
 
-  const success = await usersService.createUser(name, email, password); 
+    if (password_confirm != password){
+      throw errorResponder(
+        errorTypes.INVALID_PASSWORD,
+        'Please make sure your password match!'
+      )
+    }
+  const success = await usersService.createUser(name, email, password, password_confirm); 
     if (!success) {
       throw errorResponder(
         errorTypes.UNPROCESSABLE_ENTITY,
         'Failed to create user'
       );
     }
+
 
     return response.status(200).json({ name, email });
   } catch (error) {
