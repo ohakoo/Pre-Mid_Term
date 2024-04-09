@@ -9,15 +9,15 @@ const { hashPassword } = require('../../../utils/password');
  */
 async function duplicateEmail(email) {
   try {
-    const user = await usersRepository.duplicateEmailCheck(email)
-    if (!user) {
-      return false
-    } else {
-      return true
+    const isDuplicate = await usersRepository.duplicateEmailCheck(email);
+    if (!isDuplicate) {
+      return false // if the email is absent
+    }else{
+      return true; // if the email has already existed
     }
   } catch(err) {
-      console.err('Error occurred while checking for duplicate email: ', err)
-      return false
+      console.err('Error occurred while checking for duplicate email: ', err);
+      return false;
     }
 }
 

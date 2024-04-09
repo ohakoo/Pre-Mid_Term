@@ -4,12 +4,15 @@ const { User } = require('../../../models');
  * Checks for a duplicate email 
  * @param {string} email
  * @returns {Promise}
- */
+ */ 
 async function duplicateEmailCheck(email) {
-    const user = await User.findOne(
-      {email: email}
-    )
-    return !!user
+  try{
+    const user = await User.findOne({email: email});
+    return !!user;
+  } catch (err) {
+    console.error('Error occurred while checking for duplicate email: ', err);
+    return false;
+  }
 }
 
 
