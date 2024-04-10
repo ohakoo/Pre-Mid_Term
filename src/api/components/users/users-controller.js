@@ -67,7 +67,8 @@ async function createUser(request, response, next) {
         'Please make sure your password match!'
       )
     }
-  const success = await usersService.createUser(name, email, password, password_confirm); 
+
+  const success = await usersService.createUser(name, email, password); 
     if (!success) {
       throw errorResponder(
         errorTypes.UNPROCESSABLE_ENTITY,
@@ -118,6 +119,57 @@ async function updateUser(request, response, next) {
 }
 
 /**
+ * Handles password change request
+ * @param {object} request - Express request object
+ * @param {object} response - Express response object
+ * @param {object} next - Express route middlewares
+ * @returns {object} Response object or pass an error to the next route
+ */
+async function updatePass(request, response, next){
+  try {
+    const id = request.params.id;
+    const current_password= request.body.current_password;
+    const new_password = request.body.new_password;
+    const password_confirm = request.body.password_confirm;
+
+    // checks if the current password inputted is correct
+    const currentPassCheck = await usersService.matchPassword(id, current_password);
+    if (!currentPassCheck){
+      throw errorResponder(
+        errorTypes.INVALID_PASSWORD,
+        'Password is incorrect!'
+      )
+    }
+
+    if (new_password == current_password){
+      throw errorResponder(
+        errorTypes.INVALID_PASSWORD,
+        'Please make sure your password is different than your old one!'
+      )
+    }
+
+    if (password_confirm != new_password){
+      throw errorResponder(
+        errorTypes.INVALID_PASSWORD,
+        'Please make sure your password match!'
+      )
+    }
+
+
+  const success = await usersService.changePassword(id, new_password); 
+    if (!success) {
+      throw errorResponder(
+        errorTypes.UNPROCESSABLE_ENTITY,
+        'Failed to create user'
+      );
+    }
+  } catch(error) {
+    return next(error);
+  }
+}
+
+
+/**
  * Handle delete user request
  * @param {object} request - Express request object
  * @param {object} response - Express response object
@@ -148,4 +200,5 @@ module.exports = {
   createUser,
   updateUser,
   deleteUser,
+  updatePass,
 };
