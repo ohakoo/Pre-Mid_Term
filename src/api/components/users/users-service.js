@@ -46,6 +46,12 @@ async function matchPassword(id, current_password){
 async function changePassword(id, new_password) {
   // Hash password
   const hashedPassword = await hashPassword(new_password);
+  const user = await usersRepository.getUser(id);
+
+   // User not found
+   if (!user) {
+    return null;
+    }
 
   try {
     await usersRepository.updatePassword(id, hashedPassword);

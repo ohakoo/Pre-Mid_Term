@@ -163,6 +163,8 @@ async function updatePass(request, response, next){
         'Failed to create user'
       );
     }
+    
+    return response.status(200).json({ id });
   } catch(error) {
     return next(error);
   }
